@@ -397,3 +397,120 @@ document
 
 }
 );
+
+function saveHistory(code){
+
+    const movement =
+    document.querySelector(
+    'input[name="movement"]:checked'
+    ).value;
+
+    const item = {
+
+        code,
+
+        movement,
+
+        type:
+        detectCodeType(code),
+
+        date:
+        new Date()
+        .toISOString(),
+
+        localDate:
+        new Date()
+        .toLocaleString(
+        "pt-BR"
+        )
+
+    };
+
+    historyData.unshift(item);
+
+    localStorage.setItem(
+
+        "scanner_history",
+
+        JSON.stringify(
+        historyData
+        )
+
+    );
+
+    renderHistory();
+
+}
+function detectCodeType(code){
+
+    if(
+
+        code.startsWith("http") ||
+        code.includes("://") ||
+        code.length > 30
+
+    ){
+
+        return "QR";
+
+    }
+
+    return "BARCODE";
+
+}
+function updateStats(){
+
+    const today =
+    new Date()
+    .toDateString();
+
+    let qrCount = 0;
+    let barcodeCount = 0;
+    let todayCount = 0;
+
+    historyData.forEach(item=>{
+
+        if(
+
+            new Date(item.date)
+            .toDateString()
+            === today
+
+        ){
+
+            todayCount++;
+
+            if(item.type==="QR"){
+
+                qrCount++;
+
+            }
+            else{
+
+                barcodeCount++;
+
+            }
+
+        }
+
+    });
+
+    document
+    .getElementById(
+    "todayScans"
+    ).innerText =
+    todayCount;
+
+    document
+    .getElementById(
+    "qrCount"
+    ).innerText =
+    qrCount;
+
+    document
+    .getElementById(
+    "barcodeCount"
+    ).innerText =
+    barcodeCount;
+
+}
