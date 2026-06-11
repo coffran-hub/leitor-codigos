@@ -81,15 +81,27 @@ function renderHistory(){
 
         li.innerHTML = `
 
-        <strong>
-        ${item.code}
-        </strong>
+        <div class="history-item">
 
-        <br>
+            <div class="history-movement">
 
-        <small>
-        ${item.localDate}
-        </small>
+                ${item.movement}
+
+            </div>
+
+            <div class="history-code">
+
+                ${item.code}
+
+            </div>
+
+            <div class="history-date">
+
+                ${item.localDate}
+
+            </div>
+
+        </div>
 
         `;
 
