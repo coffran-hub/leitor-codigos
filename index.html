@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Controle de Leitura</title>
+
+<link rel="stylesheet"
+      href="style.css">
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <h1>📦 Controle de Leitura</h1>
+        <small id="dataAtual"></small>
+    </div>
+
+    <div class="card">
+
+        <label>Operação</label>
+
+        <select id="operacao">
+
+            <option>Entrada</option>
+
+            <option>Saída</option>
+
+            <option>Conferência</option>
+
+        </select>
+
+    </div>
+
+    <div class="card">
+        <div id="reader"></div>
+    </div>
+
+    <div class="card">
+
+        <h3>Última leitura</h3>
+
+        <h2 id="codigo">---</h2>
+
+        <small id="hora">---</small>
+
+    </div>
+
+    <div class="card">
+
+        <span class="status">
+            🟢 Sistema Online
+        </span>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
