@@ -14,26 +14,24 @@ const selectedDevice =
 devices[0].deviceId;
 
 codeReader.decodeFromVideoDevice(
-selectedDevice,
-video,
-(resultScan, err)=>{
+  selectedDevice,
+  video,
+  (resultScan, err) => {
 
-if(resultScan){
+    if(resultScan){
 
-result.value = resultScan.text;
+      result.value = resultScan.text;
 
-saveHistory(resultScan.text);
+      saveHistory(resultScan.text);
 
-sendToAppsScript(resultScan.text);
+      sendToAppsScript(resultScan.text);
 
-playBeep();
+      playBeep();
 
-}
+    }
 
-});
-
-}
-
+  }
+);
 function stopScanner(){
 codeReader.reset();
 }
