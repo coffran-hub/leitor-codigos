@@ -30,14 +30,26 @@ async function loadCameras(){
 
         cameraSelect.innerHTML = "";
 
+        let rearCamera = null;
+
         devices.forEach((device,index)=>{
+
+            const label =
+            (device.label || "").toLowerCase();
+
+            if(
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("traseira") ||
+                label.includes("environment")
+            ){
+                rearCamera = device;
+            }
 
             const option =
             document.createElement("option");
 
-            option.value =
-            device.deviceId;
-
+            option.value = device.deviceId;
             option.text =
             device.label ||
             `Câmera ${index+1}`;
@@ -46,7 +58,16 @@ async function loadCameras(){
 
         });
 
-        if(devices.length){
+        if(rearCamera){
+
+            selectedDeviceId =
+            rearCamera.deviceId;
+
+            cameraSelect.value =
+            rearCamera.deviceId;
+
+        }
+        else if(devices.length){
 
             selectedDeviceId =
             devices[0].deviceId;
@@ -58,14 +79,9 @@ async function loadCameras(){
 
         console.error(error);
 
-        showToast(
-        "Erro ao carregar câmeras"
-        );
-
     }
 
 }
-
 /* --------------------------
    TROCAR CAMERA
 -------------------------- */
