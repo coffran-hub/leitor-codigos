@@ -1,20 +1,136 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Controle de Leitura</title>
 
-<link rel="stylesheet"
-      href="style.css">
-
 <script src="https://unpkg.com/html5-qrcode"></script>
 
+<style>
+:root{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --border:#334155;
+    --primary:#3b82f6;
+    --success:#22c55e;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:var(--text);
+    font-family:Inter,Arial,sans-serif;
+    min-height:100vh;
+    padding:16px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+}
+
+.card{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:16px;
+}
+
+h1{
+    font-size:24px;
+}
+
+.sub{
+    color:var(--muted);
+    margin-top:5px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-size:14px;
+}
+
+select{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+}
+
+#reader{
+    overflow:hidden;
+    border-radius:16px;
+}
+
+.info{
+    text-align:center;
+}
+
+.codigo{
+    font-size:24px;
+    font-weight:bold;
+    word-break:break-all;
+    margin:10px 0;
+}
+
+.status{
+    text-align:center;
+    padding:12px;
+    border-radius:12px;
+    background:#14532d;
+    color:white;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    cursor:pointer;
+    font-size:16px;
+    background:var(--primary);
+    color:white;
+}
+
+.btn:disabled{
+    opacity:.5;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.box{
+    background:#334155;
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+}
+
+.valor{
+    font-size:22px;
+    font-weight:bold;
+}
+
+small{
+    color:var(--muted);
+}
+</style>
 </head>
 
 <body>
@@ -23,50 +139,238 @@
 
     <div class="card">
         <h1>📦 Controle de Leitura</h1>
-        <small id="dataAtual"></small>
+        <div class="sub" id="dataAtual"></div>
     </div>
 
     <div class="card">
-
         <label>Operação</label>
 
         <select id="operacao">
-
-            <option>Entrada</option>
-
-            <option>Saída</option>
-
-            <option>Conferência</option>
-
+            <option value="Entrada">Entrada</option>
+            <option value="Saída">Saída</option>
+            <option value="Conferência">Conferência</option>
         </select>
+    </div>
 
+    <div class="card">
+        <button class="btn" id="btnScanner">
+            📷 Iniciar Scanner
+        </button>
     </div>
 
     <div class="card">
         <div id="reader"></div>
     </div>
 
-    <div class="card">
-
+    <div class="card info">
         <h3>Última leitura</h3>
 
-        <h2 id="codigo">---</h2>
+        <div class="codigo" id="codigo">
+            ---
+        </div>
 
-        <small id="hora">---</small>
+        <small id="hora">
+            ---
+        </small>
+    </div>
+
+    <div class="grid">
+
+        <div class="box">
+            <div class="valor" id="contador">
+                0
+            </div>
+            <small>Leituras</small>
+        </div>
+
+        <div class="box">
+            <div class="valor" id="operacaoAtual">
+                Entrada
+            </div>
+            <small>Operação</small>
+        </div>
 
     </div>
 
-    <div class="card">
+    <br>
 
-        <span class="status">
-            🟢 Sistema Online
-        </span>
-
+    <div class="status" id="status">
+        🟢 Sistema pronto
     </div>
 
 </div>
 
-<script src="app.js"></script>
+<script>
+
+// ==========================
+// URL DO APPS SCRIPT
+// ==========================
+
+const API =
+"https://script.google.com/macros/s/SUA_URL_DO_APPS_SCRIPT/exec";
+
+// ==========================
+
+document.getElementById("dataAtual")
+.innerText =
+new Date().toLocaleString("pt-BR");
+
+let scannerAtivo = false;
+let scanner = null;
+let contador = 0;
+let ultimoCodigo = "";
+let ultimoTempo = 0;
+
+document
+.getElementById("operacao")
+.addEventListener("change",()=>{
+
+    document
+    .getElementById("operacaoAtual")
+    .innerText =
+    document
+    .getElementById("operacao")
+    .value;
+
+});
+
+function detectarTipo(codigo){
+
+    if(
+        codigo.includes("{") ||
+        codigo.includes("/") ||
+        codigo.length > 20
+    ){
+        return "QRCode";
+    }
+
+    return "Barcode";
+}
+
+async function registrar(codigo){
+
+    const agora = Date.now();
+
+    if(
+        codigo === ultimoCodigo &&
+        agora - ultimoTempo < 2000
+    ){
+        return;
+    }
+
+    ultimoCodigo = codigo;
+    ultimoTempo = agora;
+
+    const operacao =
+    document
+    .getElementById("operacao")
+    .value;
+
+    const tipo =
+    detectarTipo(codigo);
+
+    try{
+
+        await fetch(API,{
+            method:"POST",
+            body:JSON.stringify({
+                codigo,
+                operacao,
+                tipo
+            })
+        });
+
+        contador++;
+
+        document
+        .getElementById("contador")
+        .innerText = contador;
+
+        document
+        .getElementById("codigo")
+        .innerText = codigo;
+
+        document
+        .getElementById("hora")
+        .innerText =
+        new Date()
+        .toLocaleTimeString("pt-BR");
+
+        document
+        .getElementById("status")
+        .innerHTML =
+        "✅ Registrado com sucesso";
+
+        if(navigator.vibrate){
+            navigator.vibrate(150);
+        }
+
+    }catch(e){
+
+        document
+        .getElementById("status")
+        .innerHTML =
+        "❌ Erro ao registrar";
+
+        console.error(e);
+    }
+}
+
+async function iniciarScanner(){
+
+    if(scannerAtivo) return;
+
+    scannerAtivo = true;
+
+    scanner =
+    new Html5Qrcode("reader");
+
+    try{
+
+        await scanner.start(
+            {
+                facingMode:"environment"
+            },
+            {
+                fps:10,
+                qrbox:{
+                    width:250,
+                    height:250
+                }
+            },
+            (codigoLido)=>{
+                registrar(codigoLido);
+            }
+        );
+
+        document
+        .getElementById("btnScanner")
+        .disabled = true;
+
+        document
+        .getElementById("btnScanner")
+        .innerText =
+        "Scanner Ativo";
+
+    }catch(err){
+
+        console.error(err);
+
+        document
+        .getElementById("status")
+        .innerHTML =
+        "❌ Não foi possível acessar a câmera";
+    }
+}
+
+document
+.getElementById("btnScanner")
+.addEventListener(
+    "click",
+    iniciarScanner
+);
+
+</script>
 
 </body>
 </html>
