@@ -34,21 +34,27 @@ localStorage.getItem(
 
 function saveHistory(code){
 
-    const item = {
+   const movement =
 
-        code: code,
+document.querySelector(
+'input[name="movement"]:checked'
+)?.value || "ENTRADA";
 
-        date:
-        new Date()
-        .toISOString(),
+const item = {
 
-        localDate:
-        new Date()
-        .toLocaleString(
-        "pt-BR"
-        )
+    code,
 
-    };
+    movement,
+
+    date:
+    new Date().toISOString(),
+
+    localDate:
+    new Date().toLocaleString(
+    "pt-BR"
+    )
+
+};
 
     historyData.unshift(item);
 
