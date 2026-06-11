@@ -129,5 +129,17 @@ new Audio(
 );
 
 audio.play();
+function sendToAppsScript(code){
+
+  fetch(
+    "URL_DO_SEU_WEBAPP",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        code: code
+      })
+    }
+  );
+}
 
 }
