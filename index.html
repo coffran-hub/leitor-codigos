@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
 
 <title>Controle de Leitura</title>
 
@@ -11,185 +15,105 @@
 <style>
 
 :root{
-    --bg:#0f172a;
-    --card:#1e293b;
-    --card2:#334155;
-    --primary:#3b82f6;
-    --success:#22c55e;
-    --danger:#ef4444;
-    --text:#f8fafc;
-    --muted:#94a3b8;
+  --bg:#0f172a;
+  --card:#1e293b;
+  --primary:#2563eb;
+  --success:#22c55e;
+  --text:#fff;
 }
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
 body{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    color:var(--text);
-    font-family:Arial,sans-serif;
-    padding:15px;
+  background:var(--bg);
+  color:white;
+  font-family:Arial,sans-serif;
+  padding:15px;
 }
 
 .container{
-    max-width:700px;
-    margin:auto;
+  max-width:600px;
+  margin:auto;
 }
 
 .card{
-    background:rgba(255,255,255,.05);
-    backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:20px;
-    padding:18px;
-    margin-bottom:15px;
+  background:var(--card);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:15px;
 }
 
 h1{
-    font-size:24px;
-}
-
-.sub{
-    color:var(--muted);
-    margin-top:5px;
+  margin-bottom:10px;
 }
 
 select{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:12px;
-    font-size:16px;
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
 }
 
 button{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:12px;
-    background:var(--primary);
-    color:white;
-    font-size:16px;
-    cursor:pointer;
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
 }
 
 video{
-    width:100%;
-    border-radius:15px;
-    background:black;
+  width:100%;
+  border-radius:15px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.stat{
-    background:var(--card2);
-    border-radius:15px;
-    padding:15px;
-    text-align:center;
-}
-
-.stat-number{
-    font-size:28px;
-    font-weight:bold;
-}
-
-.stat-label{
-    color:var(--muted);
-    font-size:13px;
+.info{
+  text-align:center;
 }
 
 .codigo{
-    font-size:22px;
-    font-weight:bold;
-    word-break:break-all;
+  font-size:24px;
+  font-weight:bold;
+  word-break:break-all;
 }
 
 .status{
-    text-align:center;
-    font-weight:bold;
-}
-
-.online{
-    color:var(--success);
-}
-
-.error{
-    color:var(--danger);
-}
-
-.lista{
-    max-height:300px;
-    overflow:auto;
-}
-
-.item{
-    padding:10px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    font-size:14px;
-}
-
-.item:last-child{
-    border-bottom:none;
-}
-
-.item-hora{
-    color:#94a3b8;
-    font-size:12px;
-}
-
-.badge{
-    display:inline-block;
-    background:#2563eb;
-    padding:3px 8px;
-    border-radius:8px;
-    font-size:12px;
+  text-align:center;
+  color:var(--success);
+  font-weight:bold;
 }
 
 </style>
+
 </head>
+
 <body>
 
 <div class="container">
 
 <div class="card">
-    <h1>📦 Controle de Leitura</h1>
-    <div class="sub" id="dataAtual"></div>
+<h1>📦 Controle de Leitura</h1>
+
+<div id="data"></div>
 </div>
-
-<div class="grid">
-
-    <div class="stat">
-        <div class="stat-number" id="contadorDia">0</div>
-        <div class="stat-label">Total Hoje</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-number" id="tipoAtual">--</div>
-        <div class="stat-label">Tipo</div>
-    </div>
-
-</div>
-
-<br>
 
 <div class="card">
 
-<label>Operação</label>
-
-<br><br>
-
 <select id="operacao">
 
-<option value="Entrada">Entrada</option>
-<option value="Saída">Saída</option>
-<option value="Conferência">Conferência</option>
+<option>Entrada</option>
+
+<option>Saída</option>
+
+<option>Conferência</option>
 
 </select>
 
@@ -198,7 +122,9 @@ video{
 <div class="card">
 
 <button id="btnScanner">
+
 📷 Iniciar Scanner
+
 </button>
 
 </div>
@@ -209,33 +135,24 @@ video{
 
 </div>
 
-<div class="card">
+<div class="card info">
 
-<h3>Última Leitura</h3>
+<h3>Última leitura</h3>
 
 <br>
 
-<div class="codigo" id="codigo">
+<div class="codigo"
+     id="codigo">
+
 ---
+
 </div>
 
 <br>
 
-<div id="hora">
+<div id="tipo">
+
 ---
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Últimos Registros</h3>
-
-<br>
-
-<div id="listaRegistros" class="lista">
-
-Nenhum registro.
 
 </div>
 
@@ -243,7 +160,8 @@ Nenhum registro.
 
 <div class="card">
 
-<div id="status" class="status online">
+<div class="status"
+     id="status">
 
 🟢 Sistema pronto
 
@@ -255,246 +173,153 @@ Nenhum registro.
 
 <script>
 
-/* =====================================================
-   COLE A URL DO APPS SCRIPT AQUI
-===================================================== */
-
 const API =
-"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
+"COLE_SUA_URL_AQUI";
 
-/* ===================================================== */
-
-document.getElementById("dataAtual")
+document
+.getElementById("data")
 .innerText =
-new Date().toLocaleString("pt-BR");
-
-let codeReader;
-
-let totalHoje = 0;
+new Date()
+.toLocaleString("pt-BR");
 
 let ultimoCodigo = "";
 let ultimoTempo = 0;
 
-let historico = [];
-
-function vibrar(){
-
-    if(navigator.vibrate){
-        navigator.vibrate(200);
-    }
-
-}
-
 function podeRegistrar(codigo){
 
-    const agora = Date.now();
+  const agora =
+    Date.now();
 
-    if(
-        codigo === ultimoCodigo &&
-        agora - ultimoTempo < 2000
-    ){
-        return false;
-    }
+  if(
+      codigo === ultimoCodigo &&
+      agora - ultimoTempo < 2000
+  ){
+      return false;
+  }
 
-    ultimoCodigo = codigo;
-    ultimoTempo = agora;
+  ultimoCodigo = codigo;
+  ultimoTempo = agora;
 
-    return true;
+  return true;
+
 }
 
 async function registrar(
-    codigo,
-    tipo
+  codigo,
+  tipo
 ){
 
-    if(!podeRegistrar(codigo)){
-        return;
-    }
+  if(!podeRegistrar(codigo)){
+    return;
+  }
+
+  try{
 
     const operacao =
-    document.getElementById("operacao")
-    .value;
+      document
+      .getElementById("operacao")
+      .value;
 
-    try{
+    await fetch(API,{
+      method:"POST",
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+      body:JSON.stringify({
+        codigo,
+        operacao,
+        tipo
+      })
+    });
 
-        await fetch(API,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-                codigo,
-                operacao,
-                tipo
-            })
-        });
+    document
+    .getElementById("codigo")
+    .innerText =
+    codigo;
 
-        totalHoje++;
+    document
+    .getElementById("tipo")
+    .innerText =
+    tipo;
 
-        document.getElementById("contadorDia")
-        .innerText = totalHoje;
+    document
+    .getElementById("status")
+    .innerText =
+    "✅ Registrado";
 
-        document.getElementById("codigo")
-        .innerText = codigo;
+    navigator
+    .vibrate?.(200);
 
-        document.getElementById("tipoAtual")
-        .innerText = tipo;
+  }catch(erro){
 
-        const horario =
-        new Date()
-        .toLocaleTimeString("pt-BR");
+    console.error(erro);
 
-        document.getElementById("hora")
-        .innerText = horario;
+    document
+    .getElementById("status")
+    .innerText =
+    "❌ Erro";
 
-        historico.unshift({
-            horario,
-            operacao,
-            codigo
-        });
-
-        historico =
-        historico.slice(0,50);
-
-        atualizarLista();
-
-        document.getElementById("status")
-        .className =
-        "status online";
-
-        document.getElementById("status")
-        .innerText =
-        "✅ Registrado com sucesso";
-
-        vibrar();
-
-    }catch(erro){
-
-        console.error(erro);
-
-        document.getElementById("status")
-        .className =
-        "status error";
-
-        document.getElementById("status")
-        .innerText =
-        "❌ Erro ao registrar";
-
-    }
-
-}
-
-function atualizarLista(){
-
-    const lista =
-    document.getElementById(
-        "listaRegistros"
-    );
-
-    if(historico.length === 0){
-
-        lista.innerHTML =
-        "Nenhum registro.";
-
-        return;
-    }
-
-    lista.innerHTML =
-    historico.map(item => `
-        <div class="item">
-
-            <div class="item-hora">
-                ${item.horario}
-            </div>
-
-            <br>
-
-            <span class="badge">
-                ${item.operacao}
-            </span>
-
-            <br><br>
-
-            ${item.codigo}
-
-        </div>
-    `).join("");
+  }
 
 }
 
 async function iniciarScanner(){
 
-    try{
+  const codeReader =
+    new ZXing
+    .BrowserMultiFormatReader();
 
-        document.getElementById("status")
-        .innerText =
-        "Abrindo câmera...";
+  try{
 
-        codeReader =
-        new ZXing
-        .BrowserMultiFormatReader();
+    await codeReader
+    .decodeFromConstraints(
 
-        await codeReader.decodeFromConstraints(
+      {
+        video:{
+          facingMode:
+          "environment"
+        }
+      },
 
-            {
-                video:{
-                    facingMode:"environment"
-                }
-            },
+      "video",
 
-            "video",
+      (
+        result,
+        err
+      ) => {
 
-            (result, err)=>{
+        if(result){
 
-                if(result){
+          registrar(
+            result.getText(),
+            result
+              .getBarcodeFormat()
+              .toString()
+          );
 
-                    registrar(
-                        result.getText(),
-                        String(
-                            result
-                            .getBarcodeFormat()
-                        )
-                    );
+        }
 
-                }
+      }
 
-            }
+    );
 
-        );
+  }catch(e){
 
-       document.getElementById("btnScanner")
-.addEventListener("click", async () => {
+    console.error(e);
 
-    alert("Botão funcionando");
+  }
 
-    try {
+}
 
-        const stream =
-        await navigator.mediaDevices.getUserMedia({
-            video:{
-                facingMode:"environment"
-            }
-        });
-
-        document
-        .getElementById("video")
-        .srcObject = stream;
-
-        document
-        .getElementById("video")
-        .play();
-
-        alert("Câmera aberta");
-
-    } catch(err){
-
-        alert(err.message);
-
-        console.error(err);
-
-    }
-
-});
+document
+.getElementById(
+  "btnScanner"
+)
+.addEventListener(
+  "click",
+  iniciarScanner
+);
 
 </script>
 
