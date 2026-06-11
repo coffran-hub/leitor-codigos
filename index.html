@@ -266,50 +266,78 @@ async function registrar(
 
 async function iniciarScanner(){
 
-  const codeReader =
-    new ZXing.BrowserMultiFormatReader();
+  document
+    .getElementById("status")
+    .innerText =
+    "📷 Abrindo câmera...";
 
   try{
 
-    await codeReader
-    .decodeFromConstraints(
+    const codeReader =
+      new ZXing.BrowserMultiFormatReader();
 
-  {
-  video:{
-    facingMode:"environment"
-  }
-},
+    const devices =
+      await ZXing.BrowserCodeReader
+        .listVideoInputDevices();
 
+    if(!devices.length){
+
+      document
+        .getElementById("status")
+        .innerText =
+        "❌ Nenhuma câmera encontrada";
+
+      return;
+    }
+
+    const cameraId =
+      devices[devices.length - 1].deviceId;
+
+    await codeReader.decodeFromVideoDevice(
+      cameraId,
       "video",
+      (result, err) => {
 
-      (
-        result,
-        err
-      ) => {
+        if(result){
 
-      if(result){
+          const codigo =
+            result.getText();
 
-  console.log(
-    "Código:",
-    result.getText(),
-    "Formato:",
-    result.getBarcodeFormat().toString()
-  );
+          const tipo =
+            result
+              .getBarcodeFormat()
+              .toString();
 
-  registrar(
-    result.getText(),
-    result.getBarcodeFormat().toString()
-  );
+          console.log(
+            "Código:",
+            codigo,
+            "Tipo:",
+            tipo
+          );
 
-}
+          registrar(
+            codigo,
+            tipo
+          );
+
+        }
 
       }
-
     );
+
+    document
+      .getElementById("status")
+      .innerText =
+      "📷 Scanner ativo";
 
   }catch(e){
 
     console.error(e);
+
+    document
+      .getElementById("status")
+      .innerText =
+      "❌ Erro ao abrir câmera";
 
   }
 
