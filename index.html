@@ -266,78 +266,67 @@ async function registrar(
 
 async function iniciarScanner(){
 
-  document
-    .getElementById("status")
-    .innerText =
+  document.getElementById("status").innerText =
     "📷 Abrindo câmera...";
+
+  const codeReader =
+    new ZXing.BrowserMultiFormatReader();
 
   try{
 
-    const codeReader =
-      new ZXing.BrowserMultiFormatReader();
+    await codeReader.decodeFromConstraints(
 
-    const devices =
-      await ZXing.BrowserCodeReader
-        .listVideoInputDevices();
+      {
+        video:{
+          facingMode:"environment"
+        }
+      },
 
-    if(!devices.length){
-
-      document
-        .getElementById("status")
-        .innerText =
-        "❌ Nenhuma câmera encontrada";
-
-      return;
-    }
-
-    const cameraId =
-      devices[devices.length - 1].deviceId;
-
-    await codeReader.decodeFromVideoDevice(
-      cameraId,
       "video",
+
       (result, err) => {
 
         if(result){
 
-          const codigo =
-            result.getText();
-
-          const tipo =
+          registrar(
+            result.getText(),
             result
               .getBarcodeFormat()
-              .toString();
-
-          console.log(
-            "Código:",
-            codigo,
-            "Tipo:",
-            tipo
-          );
-
-          registrar(
-            codigo,
-            tipo
+              .toString()
           );
 
         }
 
+        if(err &&
+           !(err instanceof ZXing.NotFoundException)
+        ){
+
+          console.error(err);
+
+          document.getElementById(
+            "status"
+          ).innerText =
+            "❌ " + err.message;
+
+        }
+
       }
+
     );
 
-    document
-      .getElementById("status")
-      .innerText =
+    document.getElementById(
+      "status"
+    ).innerText =
       "📷 Scanner ativo";
 
   }catch(e){
 
     console.error(e);
 
-    document
-      .getElementById("status")
-      .innerText =
-      "❌ Erro ao abrir câmera";
+    document.getElementById(
+      "status"
+    ).innerText =
+      "❌ " + e.message;
 
   }
 
