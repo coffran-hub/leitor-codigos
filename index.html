@@ -1,347 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1">
+<title>Universal Scanner Pro</title>
 
-<title>Controle de Leitura</title>
+<link rel="stylesheet" href="css/style.css">
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 
-<style>
-
-:root{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --primary:#2563eb;
-  --success:#22c55e;
-  --text:#fff;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
-  background:var(--bg);
-  color:white;
-  font-family:Arial,sans-serif;
-  padding:15px;
-}
-
-.container{
-  max-width:600px;
-  margin:auto;
-}
-
-.card{
-  background:var(--card);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:15px;
-}
-
-h1{
-  margin-bottom:10px;
-}
-
-select{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-}
-
-button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  background:var(--primary);
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-}
-
-video{
-  width:100%;
-  border-radius:15px;
-}
-
-.info{
-  text-align:center;
-}
-
-.codigo{
-  font-size:24px;
-  font-weight:bold;
-  word-break:break-all;
-}
-
-.status{
-  text-align:center;
-  color:var(--success);
-  font-weight:bold;
-}
-
-</style>
-
 </head>
-
 <body>
 
 <div class="container">
 
-<div class="card">
-<h1>📦 Controle de Leitura</h1>
+<header>
+<h1>📷 Universal Scanner Pro</h1>
+<p>QR Code + Todos os formatos de Código de Barras</p>
+</header>
 
-<div id="data"></div>
+<div class="scanner-card">
+
+<video id="video"></video>
+
+<div class="controls">
+
+<button id="startBtn">
+▶ Iniciar Scanner
+</button>
+
+<button id="stopBtn">
+⏹ Parar
+</button>
+
+<button id="flashBtn">
+💡 Flash
+</button>
+
+<input type="file"
+accept="image/*"
+id="imageInput">
+
 </div>
 
-<div class="card">
-
-<select id="operacao">
-
-<option>Entrada</option>
-
-<option>Saída</option>
-
-<option>Conferência</option>
-
-</select>
-
 </div>
 
-<div class="card">
+<div class="result-card">
 
-<button id="btnScanner">
+<h2>Resultado</h2>
 
-📷 Iniciar Scanner
+<textarea id="result"></textarea>
 
+<div class="buttons">
+
+<button id="copyBtn">
+📋 Copiar
+</button>
+
+<button id="shareBtn">
+📤 Compartilhar
+</button>
+
+<button id="searchBtn">
+🔎 Pesquisar
 </button>
 
 </div>
 
-<div class="card">
-
-<video id="video"></video>
-
 </div>
 
-<div class="card info">
+<div class="history-card">
 
-<h3>Última leitura</h3>
+<h2>Histórico</h2>
 
-<br>
+<ul id="history"></ul>
 
-<div class="codigo"
-     id="codigo">
-
----
-
-</div>
-
-<br>
-
-<div id="tipo">
-
----
+<button id="exportBtn">
+📁 Exportar CSV
+</button>
 
 </div>
 
 </div>
 
-<div class="card">
-
-<div class="status"
-     id="status">
-
-🟢 Sistema pronto
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-const API =
-"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
-
-document
-.getElementById("data")
-.innerText =
-new Date()
-.toLocaleString("pt-BR");
-
-let ultimoCodigo = "";
-let ultimoTempo = 0;
-
-function podeRegistrar(codigo){
-
-  const agora =
-    Date.now();
-
-  if(
-      codigo === ultimoCodigo &&
-      agora - ultimoTempo < 2000
-  ){
-      return false;
-  }
-
-  ultimoCodigo = codigo;
-  ultimoTempo = agora;
-
-  return true;
-
-}
-
-async function registrar(
-  codigo,
-  tipo
-){
-
-  if(!podeRegistrar(codigo)){
-    return;
-  }
-
-  try{
-
-    const operacao =
-      document
-      .getElementById("operacao")
-      .value;
-
-    await fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":
-        "application/json"
-      },
-      body:JSON.stringify({
-        codigo,
-        operacao,
-        tipo
-      })
-    });
-
-    document
-    .getElementById("codigo")
-    .innerText =
-    codigo;
-
-    document
-    .getElementById("tipo")
-    .innerText =
-    tipo;
-
-    document
-    .getElementById("status")
-    .innerText =
-    "✅ Registrado";
-
-    navigator
-    .vibrate?.(200);
-
-  }catch(erro){
-
-    console.error(erro);
-
-    document
-    .getElementById("status")
-    .innerText =
-    "❌ Erro";
-
-  }
-
-}
-
-async function iniciarScanner(){
-
-  document.getElementById("status").innerText =
-    "📷 Abrindo câmera...";
-
-  const codeReader =
-    new ZXing.BrowserMultiFormatReader();
-
-  try{
-
-    await codeReader.decodeFromConstraints(
-
-      {
-        video:{
-          facingMode:"environment"
-        }
-      },
-
-      "video",
-
-      (result, err) => {
-
-        if(result){
-
-          registrar(
-            result.getText(),
-            result
-              .getBarcodeFormat()
-              .toString()
-          );
-
-        }
-
-        if(err &&
-           !(err instanceof ZXing.NotFoundException)
-        ){
-
-          console.error(err);
-
-          document.getElementById(
-            "status"
-          ).innerText =
-            "❌ " + err.message;
-
-        }
-
-      }
-
-    );
-
-    document.getElementById(
-      "status"
-    ).innerText =
-      "📷 Scanner ativo";
-
-  }catch(e){
-
-    console.error(e);
-
-    document.getElementById(
-      "status"
-    ).innerText =
-      "❌ " + e.message;
-
-  }
-
-}
-
-document
-.getElementById(
-  "btnScanner"
-)
-.addEventListener(
-  "click",
-  iniciarScanner
-);
-
-</script>
+<script src="js/scanner.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
