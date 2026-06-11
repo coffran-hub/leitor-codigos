@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Controle de Leitura</title>
 
@@ -15,105 +11,185 @@
 <style>
 
 :root{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --primary:#2563eb;
-  --success:#22c55e;
-  --text:#fff;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --card2:#334155;
+    --primary:#3b82f6;
+    --success:#22c55e;
+    --danger:#ef4444;
+    --text:#f8fafc;
+    --muted:#94a3b8;
 }
 
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
-  background:var(--bg);
-  color:white;
-  font-family:Arial,sans-serif;
-  padding:15px;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:var(--text);
+    font-family:Arial,sans-serif;
+    padding:15px;
 }
 
 .container{
-  max-width:600px;
-  margin:auto;
+    max-width:700px;
+    margin:auto;
 }
 
 .card{
-  background:var(--card);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:15px;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:15px;
 }
 
 h1{
-  margin-bottom:10px;
+    font-size:24px;
+}
+
+.sub{
+    color:var(--muted);
+    margin-top:5px;
 }
 
 select{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
 }
 
 button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  background:var(--primary);
-  color:white;
-  font-size:16px;
-  cursor:pointer;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--primary);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
 }
 
 video{
-  width:100%;
-  border-radius:15px;
+    width:100%;
+    border-radius:15px;
+    background:black;
 }
 
-.info{
-  text-align:center;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.stat{
+    background:var(--card2);
+    border-radius:15px;
+    padding:15px;
+    text-align:center;
+}
+
+.stat-number{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:13px;
 }
 
 .codigo{
-  font-size:24px;
-  font-weight:bold;
-  word-break:break-all;
+    font-size:22px;
+    font-weight:bold;
+    word-break:break-all;
 }
 
 .status{
-  text-align:center;
-  color:var(--success);
-  font-weight:bold;
+    text-align:center;
+    font-weight:bold;
+}
+
+.online{
+    color:var(--success);
+}
+
+.error{
+    color:var(--danger);
+}
+
+.lista{
+    max-height:300px;
+    overflow:auto;
+}
+
+.item{
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    font-size:14px;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
+
+.item-hora{
+    color:#94a3b8;
+    font-size:12px;
+}
+
+.badge{
+    display:inline-block;
+    background:#2563eb;
+    padding:3px 8px;
+    border-radius:8px;
+    font-size:12px;
 }
 
 </style>
-
 </head>
-
 <body>
 
 <div class="container">
 
 <div class="card">
-<h1>📦 Controle de Leitura</h1>
-
-<div id="data"></div>
+    <h1>📦 Controle de Leitura</h1>
+    <div class="sub" id="dataAtual"></div>
 </div>
+
+<div class="grid">
+
+    <div class="stat">
+        <div class="stat-number" id="contadorDia">0</div>
+        <div class="stat-label">Total Hoje</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number" id="tipoAtual">--</div>
+        <div class="stat-label">Tipo</div>
+    </div>
+
+</div>
+
+<br>
 
 <div class="card">
 
+<label>Operação</label>
+
+<br><br>
+
 <select id="operacao">
 
-<option>Entrada</option>
-
-<option>Saída</option>
-
-<option>Conferência</option>
+<option value="Entrada">Entrada</option>
+<option value="Saída">Saída</option>
+<option value="Conferência">Conferência</option>
 
 </select>
 
@@ -122,9 +198,7 @@ video{
 <div class="card">
 
 <button id="btnScanner">
-
 📷 Iniciar Scanner
-
 </button>
 
 </div>
@@ -135,24 +209,33 @@ video{
 
 </div>
 
-<div class="card info">
+<div class="card">
 
-<h3>Última leitura</h3>
+<h3>Última Leitura</h3>
 
 <br>
 
-<div class="codigo"
-     id="codigo">
-
+<div class="codigo" id="codigo">
 ---
-
 </div>
 
 <br>
 
-<div id="tipo">
-
+<div id="hora">
 ---
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Últimos Registros</h3>
+
+<br>
+
+<div id="listaRegistros" class="lista">
+
+Nenhum registro.
 
 </div>
 
@@ -160,8 +243,7 @@ video{
 
 <div class="card">
 
-<div class="status"
-     id="status">
+<div id="status" class="status online">
 
 🟢 Sistema pronto
 
@@ -173,152 +255,247 @@ video{
 
 <script>
 
-const API =
-"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
+/* =====================================================
+   COLE A URL DO APPS SCRIPT AQUI
+===================================================== */
 
-document
-.getElementById("data")
+const API =
+"COLE_SUA_URL_DO_APPS_SCRIPT_AQUI";
+
+/* ===================================================== */
+
+document.getElementById("dataAtual")
 .innerText =
-new Date()
-.toLocaleString("pt-BR");
+new Date().toLocaleString("pt-BR");
+
+let codeReader;
+
+let totalHoje = 0;
 
 let ultimoCodigo = "";
 let ultimoTempo = 0;
 
-function podeRegistrar(codigo){
+let historico = [];
 
-  const agora =
-    Date.now();
+function vibrar(){
 
-  if(
-      codigo === ultimoCodigo &&
-      agora - ultimoTempo < 2000
-  ){
-      return false;
-  }
-
-  ultimoCodigo = codigo;
-  ultimoTempo = agora;
-
-  return true;
+    if(navigator.vibrate){
+        navigator.vibrate(200);
+    }
 
 }
 
+function podeRegistrar(codigo){
+
+    const agora = Date.now();
+
+    if(
+        codigo === ultimoCodigo &&
+        agora - ultimoTempo < 2000
+    ){
+        return false;
+    }
+
+    ultimoCodigo = codigo;
+    ultimoTempo = agora;
+
+    return true;
+}
+
 async function registrar(
-  codigo,
-  tipo
+    codigo,
+    tipo
 ){
 
-  if(!podeRegistrar(codigo)){
-    return;
-  }
-
-  try{
+    if(!podeRegistrar(codigo)){
+        return;
+    }
 
     const operacao =
-      document
-      .getElementById("operacao")
-      .value;
+    document.getElementById("operacao")
+    .value;
 
-    await fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":
-        "application/json"
-      },
-      body:JSON.stringify({
-        codigo,
-        operacao,
-        tipo
-      })
-    });
+    try{
 
-    document
-    .getElementById("codigo")
-    .innerText =
-    codigo;
+        await fetch(API,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                codigo,
+                operacao,
+                tipo
+            })
+        });
 
-    document
-    .getElementById("tipo")
-    .innerText =
-    tipo;
+        totalHoje++;
 
-    document
-    .getElementById("status")
-    .innerText =
-    "✅ Registrado";
+        document.getElementById("contadorDia")
+        .innerText = totalHoje;
 
-    navigator
-    .vibrate?.(200);
+        document.getElementById("codigo")
+        .innerText = codigo;
 
-  }catch(erro){
+        document.getElementById("tipoAtual")
+        .innerText = tipo;
 
-    console.error(erro);
+        const horario =
+        new Date()
+        .toLocaleTimeString("pt-BR");
 
-    document
-    .getElementById("status")
-    .innerText =
-    "❌ Erro";
+        document.getElementById("hora")
+        .innerText = horario;
 
-  }
+        historico.unshift({
+            horario,
+            operacao,
+            codigo
+        });
+
+        historico =
+        historico.slice(0,50);
+
+        atualizarLista();
+
+        document.getElementById("status")
+        .className =
+        "status online";
+
+        document.getElementById("status")
+        .innerText =
+        "✅ Registrado com sucesso";
+
+        vibrar();
+
+    }catch(erro){
+
+        console.error(erro);
+
+        document.getElementById("status")
+        .className =
+        "status error";
+
+        document.getElementById("status")
+        .innerText =
+        "❌ Erro ao registrar";
+
+    }
+
+}
+
+function atualizarLista(){
+
+    const lista =
+    document.getElementById(
+        "listaRegistros"
+    );
+
+    if(historico.length === 0){
+
+        lista.innerHTML =
+        "Nenhum registro.";
+
+        return;
+    }
+
+    lista.innerHTML =
+    historico.map(item => `
+        <div class="item">
+
+            <div class="item-hora">
+                ${item.horario}
+            </div>
+
+            <br>
+
+            <span class="badge">
+                ${item.operacao}
+            </span>
+
+            <br><br>
+
+            ${item.codigo}
+
+        </div>
+    `).join("");
 
 }
 
 async function iniciarScanner(){
 
-  const codeReader =
-    new ZXing
-    .BrowserMultiFormatReader();
+    try{
 
-  try{
+        document.getElementById("status")
+        .innerText =
+        "Abrindo câmera...";
 
-    await codeReader
-    .decodeFromConstraints(
+        codeReader =
+        new ZXing
+        .BrowserMultiFormatReader();
 
-      {
-        video:{
-          facingMode:
-          "environment"
-        }
-      },
+        await codeReader.decodeFromConstraints(
 
-      "video",
+            {
+                video:{
+                    facingMode:"environment"
+                }
+            },
 
-      (
-        result,
-        err
-      ) => {
+            "video",
 
-        if(result){
+            (result, err)=>{
 
-          registrar(
-            result.getText(),
-            result
-              .getBarcodeFormat()
-              .toString()
-          );
+                if(result){
 
-        }
+                    registrar(
+                        result.getText(),
+                        String(
+                            result
+                            .getBarcodeFormat()
+                        )
+                    );
 
-      }
+                }
 
-    );
+            }
 
-  }catch(e){
+        );
 
-    console.error(e);
+        document.getElementById(
+            "btnScanner"
+        ).disabled = true;
 
-  }
+        document.getElementById(
+            "btnScanner"
+        ).innerText =
+        "📷 Scanner Ativo";
+
+        document.getElementById("status")
+        .innerText =
+        "📷 Câmera ativa";
+
+    }catch(erro){
+
+        console.error(erro);
+
+        document.getElementById("status")
+        .className =
+        "status error";
+
+        document.getElementById("status")
+        .innerText =
+        "❌ Erro ao abrir câmera";
+
+    }
 
 }
 
 document
-.getElementById(
-  "btnScanner"
-)
+.getElementById("btnScanner")
 .addEventListener(
-  "click",
-  iniciarScanner
+    "click",
+    iniciarScanner
 );
 
 </script>
