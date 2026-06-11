@@ -266,9 +266,21 @@ async function registrar(
 
 async function iniciarScanner(){
 
-  const codeReader =
-    new ZXing
-    .BrowserMultiFormatReader();
+ const hints = new Map();
+
+hints.set(
+  ZXing.DecodeHintType.POSSIBLE_FORMATS,
+  [
+    ZXing.BarcodeFormat.QR_CODE,
+    ZXing.BarcodeFormat.EAN_13,
+    ZXing.BarcodeFormat.EAN_8,
+    ZXing.BarcodeFormat.CODE_128,
+    ZXing.BarcodeFormat.CODE_39
+  ]
+);
+
+const codeReader =
+  new ZXing.BrowserMultiFormatReader(hints);
 
   try{
 
