@@ -266,12 +266,8 @@ async function registrar(
 
 async function iniciarScanner(){
 
-
- cconst codeReader =
-  new ZXing.BrowserMultiFormatReader();
-      
-const codeReader =
-  new ZXing.BrowserMultiFormatReader(hints);
+  const codeReader =
+    new ZXing.BrowserMultiFormatReader();
 
   try{
 
