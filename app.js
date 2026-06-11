@@ -370,7 +370,7 @@ Web App publicado
 */
 
 const APPS_SCRIPT_URL =
-"COLE_AQUI_SUA_URL";
+"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
 
 /* =====================================
    ENVIAR PARA PLANILHA
@@ -378,53 +378,55 @@ const APPS_SCRIPT_URL =
 
 async function sendToAppsScript(code){
 
-    if(
+  if(
     APPS_SCRIPT_URL ===
-    "COLE_AQUI_SUA_URL"
-    ){
-        return;
-    }
+    "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec"
+  ){
+    return;
+  }
 
-    try{
+  try{
 
-        await fetch(
+    await fetch(
 
-        APPS_SCRIPT_URL,
+      APPS_SCRIPT_URL,
 
-        {
+      {
 
-            method:"POST",
+        method:"POST",
 
-            headers:{
+        headers:{
+          "Content-Type":
+          "application/json"
+        },
 
-                "Content-Type":
-                "application/json"
+        body:
+        JSON.stringify({
 
-            },
+          code:code,
 
-            body:
-            JSON.stringify({
+          type:"SCAN",
 
-                code:code,
+          user:"WEB_APP",
 
-                date:
-                new Date()
-                .toISOString()
+          device:
+          navigator.userAgent
 
-            })
+        })
 
-        }
+      }
 
-        );
+    );
 
-    }
-    catch(error){
+  }
 
-        console.error(
-        error
-        );
+  catch(error){
 
-    }
+    console.error(
+      error
+    );
+
+  }
 
 }
 
