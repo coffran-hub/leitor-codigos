@@ -1,50 +1,393 @@
 const codeReader = new ZXing.BrowserMultiFormatReader();
 
-const video = document.getElementById('video');
-const result = document.getElementById('result');
+const video =
+document.getElementById("video");
 
-let currentStream = null;
+const resultField =
+document.getElementById("result");
 
-async function startScanner(){
+const cameraSelect =
+document.getElementById("cameraSelect");
 
-const devices =
-await codeReader.listVideoInputDevices();
+let selectedDeviceId = null;
 
-const selectedDevice =
-devices[0].deviceId;
+let currentControls = null;
 
-codeReader.decodeFromVideoDevice(
-  selectedDevice,
-  video,
-  (resultScan, err) => {
+let currentTrack = null;
 
-    if(resultScan){
+let torchEnabled = false;
 
-      result.value = resultScan.text;
+/* --------------------------
+   CARREGAR CÂMERAS
+-------------------------- */
 
-      saveHistory(resultScan.text);
+async function loadCameras(){
 
-      sendToAppsScript(resultScan.text);
+    try{
 
-      playBeep();
+        const devices =
+        await codeReader.listVideoInputDevices();
+
+        cameraSelect.innerHTML = "";
+
+        devices.forEach((device,index)=>{
+
+            const option =
+            document.createElement("option");
+
+            option.value =
+            device.deviceId;
+
+            option.text =
+            device.label ||
+            `Câmera ${index+1}`;
+
+            cameraSelect.appendChild(option);
+
+        });
+
+        if(devices.length){
+
+            selectedDeviceId =
+            devices[0].deviceId;
+
+        }
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+        "Erro ao carregar câmeras"
+        );
 
     }
 
-  }
-);
-function stopScanner(){
-codeReader.reset();
 }
+
+/* --------------------------
+   TROCAR CAMERA
+-------------------------- */
+
+cameraSelect.addEventListener(
+"change",
+()=>{
+
+selectedDeviceId =
+cameraSelect.value;
+
+}
+);
+
+/* --------------------------
+   INICIAR SCANNER
+-------------------------- */
+
+async function startScanner(){
+
+    try{
+
+        stopScanner();
+
+        currentControls =
+        await codeReader.decodeFromVideoDevice(
+
+            selectedDeviceId,
+
+            video,
+
+            (result,error)=>{
+
+                if(result){
+
+                    onCodeDetected(
+                    result.text
+                    );
+
+                }
+
+            }
+
+        );
+
+        const stream =
+        video.srcObject;
+
+        if(stream){
+
+            currentTrack =
+            stream
+            .getVideoTracks()[0];
+
+        }
+
+        showToast(
+        "Scanner iniciado"
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+        "Falha ao iniciar câmera"
+        );
+
+    }
+
+}
+
+/* --------------------------
+   PARAR SCANNER
+-------------------------- */
+
+function stopScanner(){
+
+    try{
+
+        codeReader.reset();
+
+        if(currentTrack){
+
+            currentTrack.stop();
+
+        }
+
+    }
+    catch(e){}
+
+}
+
+/* --------------------------
+   FLASH
+-------------------------- */
+
+async function toggleFlash(){
+
+    if(!currentTrack){
+
+        showToast(
+        "Inicie a câmera primeiro"
+        );
+
+        return;
+    }
+
+    const capabilities =
+    currentTrack.getCapabilities();
+
+    if(!capabilities.torch){
+
+        showToast(
+        "Flash não suportado"
+        );
+
+        return;
+    }
+
+    torchEnabled =
+    !torchEnabled;
+
+    await currentTrack.applyConstraints({
+
+        advanced:[
+        {
+            torch:torchEnabled
+        }
+        ]
+
+    });
+
+    showToast(
+    torchEnabled
+    ? "Flash ligado"
+    : "Flash desligado"
+    );
+
+}
+
+/* --------------------------
+   SCAN POR IMAGEM
+-------------------------- */
 
 async function scanImage(file){
 
-const img = URL.createObjectURL(file);
+    try{
 
-const res =
-await codeReader.decodeFromImageUrl(img);
+        const imageUrl =
+        URL.createObjectURL(file);
 
-result.value = res.text;
+        const result =
+        await codeReader
+        .decodeFromImageUrl(
+        imageUrl
+        );
 
-saveHistory(res.text);
+        if(result){
+
+            onCodeDetected(
+            result.text
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+        "Nenhum código encontrado"
+        );
+
+    }
 
 }
+
+/* --------------------------
+   PROCESSAR RESULTADO
+-------------------------- */
+
+function onCodeDetected(code){
+
+    resultField.value =
+    code;
+
+    if(
+    typeof saveHistory
+    === "function"
+    ){
+
+        saveHistory(code);
+
+    }
+
+    if(
+    typeof updateStats
+    === "function"
+    ){
+
+        updateStats();
+
+    }
+
+    if(
+    typeof sendToAppsScript
+    === "function"
+    ){
+
+        sendToAppsScript(code);
+
+    }
+
+    playBeep();
+
+    showToast(
+    "Código detectado"
+    );
+
+}
+
+/* --------------------------
+   SOM
+-------------------------- */
+
+function playBeep(){
+
+    const audio =
+    new Audio(
+    "https://actions.google.com/sounds/v1/cartoon/pop.ogg"
+    );
+
+    audio.volume = 0.4;
+
+    audio.play();
+
+}
+
+/* --------------------------
+   TOAST
+-------------------------- */
+
+function showToast(message){
+
+    const toast =
+    document.getElementById(
+    "toast"
+    );
+
+    if(!toast) return;
+
+    toast.innerText =
+    message;
+
+    toast.classList.add(
+    "show"
+    );
+
+    setTimeout(()=>{
+
+        toast.classList.remove(
+        "show"
+        );
+
+    },2500);
+
+}
+
+/* --------------------------
+   EVENTOS
+-------------------------- */
+
+window.addEventListener(
+
+"load",
+
+async()=>{
+
+    await loadCameras();
+
+}
+
+);
+
+document
+.getElementById("startBtn")
+.addEventListener(
+"click",
+startScanner
+);
+
+document
+.getElementById("stopBtn")
+.addEventListener(
+"click",
+stopScanner
+);
+
+document
+.getElementById("flashBtn")
+.addEventListener(
+"click",
+toggleFlash
+);
+
+document
+.getElementById("imageInput")
+.addEventListener(
+"change",
+(event)=>{
+
+const file =
+event.target.files[0];
+
+if(file){
+
+scanImage(file);
+
+}
+
+}
+);
