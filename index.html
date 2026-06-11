@@ -274,12 +274,14 @@ async function iniciarScanner(){
     await codeReader
     .decodeFromConstraints(
 
-      {
-        video:{
-          facingMode:
-          "environment"
-        }
-      },
+    {
+  video:{
+    facingMode:"environment",
+    width: { ideal: 1920 },
+    height: { ideal: 1080 },
+    focusMode: "continuous"
+  }
+},
 
       "video",
 
@@ -288,16 +290,21 @@ async function iniciarScanner(){
         err
       ) => {
 
-        if(result){
+      if(result){
 
-          registrar(
-            result.getText(),
-            result
-              .getBarcodeFormat()
-              .toString()
-          );
+  console.log(
+    "Código:",
+    result.getText(),
+    "Formato:",
+    result.getBarcodeFormat().toString()
+  );
 
-        }
+  registrar(
+    result.getText(),
+    result.getBarcodeFormat().toString()
+  );
+
+}
 
       }
 
