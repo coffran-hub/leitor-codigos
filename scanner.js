@@ -1,4 +1,5 @@
-const codeReader = new ZXing.BrowserMultiFormatReader();
+const codeReader =
+new ZXing.BrowserMultiFormatReader();
 
 const video =
 document.getElementById("video");
@@ -6,19 +7,11 @@ document.getElementById("video");
 const resultField =
 document.getElementById("result");
 
-const cameraSelect =
-document.getElementById("cameraSelect");
-
-let selectedDeviceId = null;
-
-let currentControls = null;
-
 let currentTrack = null;
-
 let torchEnabled = false;
 
 /* --------------------------
-   CARREGAR CÂMERAS
+   CARREGAR CAMERAS
 -------------------------- */
 
 async function loadCameras(){
@@ -28,51 +21,10 @@ async function loadCameras(){
         const devices =
         await codeReader.listVideoInputDevices();
 
-        cameraSelect.innerHTML = "";
-
-        let rearCamera = null;
-
-        devices.forEach((device,index)=>{
-
-            const label =
-            (device.label || "").toLowerCase();
-
-            if(
-                label.includes("back") ||
-                label.includes("rear") ||
-                label.includes("traseira") ||
-                label.includes("environment")
-            ){
-                rearCamera = device;
-            }
-
-            const option =
-            document.createElement("option");
-
-            option.value = device.deviceId;
-            option.text =
-            device.label ||
-            `Câmera ${index+1}`;
-
-            cameraSelect.appendChild(option);
-
-        });
-
-        if(rearCamera){
-
-            selectedDeviceId =
-            rearCamera.deviceId;
-
-            cameraSelect.value =
-            rearCamera.deviceId;
-
-        }
-        else if(devices.length){
-
-            selectedDeviceId =
-            devices[0].deviceId;
-
-        }
+        console.log(
+        "Câmeras:",
+        devices
+        );
 
     }
     catch(error){
@@ -82,19 +34,6 @@ async function loadCameras(){
     }
 
 }
-/* --------------------------
-   TROCAR CAMERA
--------------------------- */
-
-cameraSelect.addEventListener(
-"change",
-()=>{
-
-selectedDeviceId =
-cameraSelect.value;
-
-}
-);
 
 /* --------------------------
    INICIAR SCANNER
@@ -104,37 +43,56 @@ async function startScanner(){
 
     try{
 
-        const stream =
-        await navigator.mediaDevices
-        .getUserMedia({
+        stopScanner();
 
-            video:{
+        const devices =
+        await codeReader
+        .listVideoInputDevices();
 
-                facingMode:{
-                    ideal:"environment"
-                },
+        if(!devices.length){
 
-                width:{
-                    ideal:1920
-                },
+            showToast(
+            "Nenhuma câmera encontrada"
+            );
 
-                height:{
-                    ideal:1080
-                }
+            return;
+        }
 
-            }
+        let selectedDeviceId =
+        devices[0].deviceId;
+
+        const rearCamera =
+        devices.find(device=>{
+
+            const label =
+            (device.label || "")
+            .toLowerCase();
+
+            return(
+
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("traseira") ||
+                label.includes("environment")
+
+            );
 
         });
 
-        video.srcObject =
-        stream;
+        if(rearCamera){
 
-        currentTrack =
-        stream.getVideoTracks()[0];
+            selectedDeviceId =
+            rearCamera.deviceId;
+
+        }
 
         await codeReader
-        .decodeFromVideoElement(
+        .decodeFromVideoDevice(
+
+            selectedDeviceId,
+
             video,
+
             (result,error)=>{
 
                 if(result){
@@ -146,6 +104,22 @@ async function startScanner(){
                 }
 
             }
+
+        );
+
+        const stream =
+        video.srcObject;
+
+        if(stream){
+
+            currentTrack =
+            stream
+            .getVideoTracks()[0];
+
+        }
+
+        showToast(
+        "Scanner iniciado"
         );
 
     }
@@ -154,12 +128,13 @@ async function startScanner(){
         console.error(error);
 
         showToast(
-        "Erro ao abrir câmera"
+        "Erro ao iniciar câmera"
         );
 
     }
 
 }
+
 /* --------------------------
    PARAR SCANNER
 -------------------------- */
@@ -174,10 +149,16 @@ function stopScanner(){
 
             currentTrack.stop();
 
+            currentTrack = null;
+
         }
 
     }
-    catch(e){}
+    catch(error){
+
+        console.error(error);
+
+    }
 
 }
 
@@ -187,45 +168,57 @@ function stopScanner(){
 
 async function toggleFlash(){
 
-    if(!currentTrack){
+    try{
 
-        showToast(
-        "Inicie a câmera primeiro"
-        );
+        if(!currentTrack){
 
-        return;
-    }
+            showToast(
+            "Inicie a câmera primeiro"
+            );
 
-    const capabilities =
-    currentTrack.getCapabilities();
-
-    if(!capabilities.torch){
-
-        showToast(
-        "Flash não suportado"
-        );
-
-        return;
-    }
-
-    torchEnabled =
-    !torchEnabled;
-
-    await currentTrack.applyConstraints({
-
-        advanced:[
-        {
-            torch:torchEnabled
+            return;
         }
-        ]
 
-    });
+        const capabilities =
+        currentTrack.getCapabilities();
 
-    showToast(
-    torchEnabled
-    ? "Flash ligado"
-    : "Flash desligado"
-    );
+        if(!capabilities.torch){
+
+            showToast(
+            "Flash não suportado"
+            );
+
+            return;
+        }
+
+        torchEnabled =
+        !torchEnabled;
+
+        await currentTrack
+        .applyConstraints({
+
+            advanced:[
+            {
+                torch:torchEnabled
+            }
+            ]
+
+        });
+
+        showToast(
+
+            torchEnabled
+            ? "Flash ligado"
+            : "Flash desligado"
+
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+    }
 
 }
 
@@ -268,7 +261,7 @@ async function scanImage(file){
 }
 
 /* --------------------------
-   PROCESSAR RESULTADO
+   RESULTADO
 -------------------------- */
 
 function onCodeDetected(code){
@@ -282,15 +275,6 @@ function onCodeDetected(code){
     ){
 
         saveHistory(code);
-
-    }
-
-    if(
-    typeof updateStats
-    === "function"
-    ){
-
-        updateStats();
 
     }
 
@@ -339,7 +323,8 @@ function showToast(message){
     "toast"
     );
 
-    if(!toast) return;
+    if(!toast)
+    return;
 
     toast.innerText =
     message;
@@ -401,14 +386,14 @@ document
 "change",
 (event)=>{
 
-const file =
-event.target.files[0];
+    const file =
+    event.target.files[0];
 
-if(file){
+    if(file){
 
-scanImage(file);
+        scanImage(file);
 
-}
+    }
 
 }
 );
