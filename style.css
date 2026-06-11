@@ -560,5 +560,52 @@ footer{
 
         width:100%;
     }
+    .history-item{
+
+    background: rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+}
+
+.history-movement{
+
+    font-size:.8rem;
+
+    font-weight:700;
+
+    color:#06b6d4;
+
+    margin-bottom:6px;
+
+    text-transform:uppercase;
+
+}
+
+.history-code{
+
+    font-size:1rem;
+
+    font-weight:600;
+
+    word-break:break-all;
+
+}
+
+.history-date{
+
+    margin-top:6px;
+
+    opacity:.7;
+
+    font-size:.8rem;
+
+}
 
 }
