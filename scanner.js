@@ -104,15 +104,37 @@ async function startScanner(){
 
     try{
 
-        stopScanner();
+        const stream =
+        await navigator.mediaDevices
+        .getUserMedia({
 
-        currentControls =
-        await codeReader.decodeFromVideoDevice(
+            video:{
 
-            selectedDeviceId,
+                facingMode:{
+                    ideal:"environment"
+                },
 
+                width:{
+                    ideal:1920
+                },
+
+                height:{
+                    ideal:1080
+                }
+
+            }
+
+        });
+
+        video.srcObject =
+        stream;
+
+        currentTrack =
+        stream.getVideoTracks()[0];
+
+        await codeReader
+        .decodeFromVideoElement(
             video,
-
             (result,error)=>{
 
                 if(result){
@@ -124,22 +146,6 @@ async function startScanner(){
                 }
 
             }
-
-        );
-
-        const stream =
-        video.srcObject;
-
-        if(stream){
-
-            currentTrack =
-            stream
-            .getVideoTracks()[0];
-
-        }
-
-        showToast(
-        "Scanner iniciado"
         );
 
     }
@@ -148,13 +154,12 @@ async function startScanner(){
         console.error(error);
 
         showToast(
-        "Falha ao iniciar câmera"
+        "Erro ao abrir câmera"
         );
 
     }
 
 }
-
 /* --------------------------
    PARAR SCANNER
 -------------------------- */
