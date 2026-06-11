@@ -260,7 +260,7 @@ Nenhum registro.
 ===================================================== */
 
 const API =
-"COLE_SUA_URL_DO_APPS_SCRIPT_AQUI";
+"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
 
 /* ===================================================== */
 
@@ -462,41 +462,39 @@ async function iniciarScanner(){
 
         );
 
-        document.getElementById(
-            "btnScanner"
-        ).disabled = true;
+       document.getElementById("btnScanner")
+.addEventListener("click", async () => {
 
-        document.getElementById(
-            "btnScanner"
-        ).innerText =
-        "📷 Scanner Ativo";
+    alert("Botão funcionando");
 
-        document.getElementById("status")
-        .innerText =
-        "📷 Câmera ativa";
+    try {
 
-    }catch(erro){
+        const stream =
+        await navigator.mediaDevices.getUserMedia({
+            video:{
+                facingMode:"environment"
+            }
+        });
 
-        console.error(erro);
+        document
+        .getElementById("video")
+        .srcObject = stream;
 
-        document.getElementById("status")
-        .className =
-        "status error";
+        document
+        .getElementById("video")
+        .play();
 
-        document.getElementById("status")
-        .innerText =
-        "❌ Erro ao abrir câmera";
+        alert("Câmera aberta");
+
+    } catch(err){
+
+        alert(err.message);
+
+        console.error(err);
 
     }
 
-}
-
-document
-.getElementById("btnScanner")
-.addEventListener(
-    "click",
-    iniciarScanner
-);
+});
 
 </script>
 
