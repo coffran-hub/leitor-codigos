@@ -136,20 +136,29 @@ playsinline>
   
 </div>
 
-<div class="card movement-card">
+<div class="movement-card">
 
-    <div class="movement-selector">
+    <label for="movementSelect">
+        Movimentação
+    </label>
 
-        <input type="radio" id="entrada" name="movement" value="ENTRADA" checked>
-        <label for="entrada">ENTRADA</label>
+    <select id="movementSelect">
 
-        <input type="radio" id="saida" name="movement" value="SAIDA">
-        <label for="saida">SAÍDA</label>
+        <option value="ENTRADA">
+            📥 Entrada
+        </option>
 
-        <input type="radio" id="devolucao" name="movement" value="DEVOLUCAO">
-        <label for="devolucao">DeVOLUÇÃO</label>
+        <option value="SAIDA">
+            📤 Saída
+        </option>
 
-    </div>
+        <option value="DEVOLUCAO">
+            🔄 Devolução
+        </option>
+
+    </select>
+
+</div>
 
 </section>
 
