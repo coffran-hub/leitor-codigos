@@ -279,65 +279,64 @@ document
    APPS SCRIPT
 ========================= */
 
-const APPS_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
+async function sendToAppsScript(code){
 
-async function sendToAppsScript(code) {
+    alert("sendToAppsScript executou");
 
-    if (
-        !APPS_SCRIPT_URL ||
-        APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec"
-    ) {
-        return;
-    }
+    console.log("Código:", code);
 
-    try {
+    try{
 
+        const response =
         await fetch(
             APPS_SCRIPT_URL,
             {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json"
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
                 },
-                body:
-                    JSON.stringify({
+                body:JSON.stringify({
 
-                        code,
+                    code:code,
 
-                        movement:
-                            document.getElementById(
-                                "movementSelect"
-                            )?.value || "ENTRADA",
+                    movement:
+                    document.getElementById(
+                    "movementSelect"
+                    )?.value || "ENTRADA",
 
-                        date:
-                            new Date()
-                                .toLocaleString(
-                                    "pt-BR"
-                                ),
+                    user:"WEB_APP",
 
-                        user:
-                            "WEB_APP",
+                    device:
+                    navigator.userAgent
 
-                        device:
-                            navigator.userAgent
-
-                    })
+                })
             }
         );
 
+        console.log(
+            "Status:",
+            response.status
+        );
+
+        const text =
+        await response.text();
+
+        console.log(
+            "Resposta:",
+            text
+        );
+
     }
-    catch (error) {
+    catch(error){
 
         console.error(
+            "Erro:",
             error
         );
 
     }
 
 }
-
 /* =========================
    INIT
 ========================= */
