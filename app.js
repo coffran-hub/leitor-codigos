@@ -87,23 +87,27 @@ function renderHistory(){
 
         li.innerHTML = `
 
-        <div class="history-item">
+        <div class="scan-card">
 
-            <div class="history-movement">
+            <div class="scan-top">
 
-                ${item.movement}
+                <span class="movement-badge">
+
+                    ${item.movement}
+
+                </span>
+
+                <span class="scan-time">
+
+                    ${item.localDate}
+
+                </span>
 
             </div>
 
-            <div class="history-code">
+            <div class="scan-code">
 
                 ${item.code}
-
-            </div>
-
-            <div class="history-date">
-
-                ${item.localDate}
 
             </div>
 
@@ -118,7 +122,6 @@ function renderHistory(){
     updateStats();
 
 }
-
 /* =====================================
    ESTATÍSTICAS
 ===================================== */
