@@ -286,7 +286,7 @@ async function sendToAppsScript(code) {
 
     if (
         !APPS_SCRIPT_URL ||
-        APPS_SCRIPT_URL === "COLE_SUA_URL_AQUI"
+        APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec"
     ) {
         return;
     }
