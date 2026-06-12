@@ -42,6 +42,8 @@ function detectCodeType(code) {
 ========================= */
 
 function saveHistory(code) {
+    
+    alert("saveHistory executou");
 
     const movement =
         document.getElementById(
@@ -282,6 +284,8 @@ const APPS_SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
 
 async function sendToAppsScript(code){
+
+    alert("sendToAppsScript executou");
 
     console.log("Enviando:", code);
 
