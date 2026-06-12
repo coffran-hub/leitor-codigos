@@ -1,3 +1,8 @@
+const resultField =
+    document.getElementById("result");
+
+const historyList =
+    document.getElementById("historyList");
 
 const todayScansEl =
     document.getElementById("todayScans");
@@ -335,5 +340,5 @@ async function sendToAppsScript(code){
 renderHistory();
 updateStats();
 
-alert("APP.JS CARREGOU");
+
 
