@@ -134,45 +134,26 @@ playsinline>
 ⏹ Parar
 </button>
 
-<div class="movement-card">
+<div class="card movement-card">
 
-    <h3>Movimentação</h3>
+    <div class="section-title">
+        Tipo de Movimentação
+    </div>
 
     <div class="movement-selector">
 
-        <input
-        type="radio"
-        id="entrada"
-        name="movement"
-        value="ENTRADA"
-        checked>
+        <input type="radio" id="entrada" name="movement" value="ENTRADA" checked>
+        <label for="entrada">Entrada</label>
 
-        <label for="entrada">
-            📥 Entrada
-        </label>
+        <input type="radio" id="saida" name="movement" value="SAIDA">
+        <label for="saida">Saída</label>
 
-        <input
-        type="radio"
-        id="saida"
-        name="movement"
-        value="SAIDA">
-
-        <label for="saida">
-            📤 Saída
-        </label>
-
-        <input
-        type="radio"
-        id="devolucao"
-        name="movement"
-        value="DEVOLUCAO">
-
-        <label for="devolucao">
-            🔄 Devolução
-        </label>
+        <input type="radio" id="devolucao" name="movement" value="DEVOLUCAO">
+        <label for="devolucao">Devolução</label>
 
     </div>
 
+</div>
 <div class="history-card">
 
     <div class="history-header">
@@ -208,24 +189,19 @@ readonly>
 
 <div class="result-actions">
 
-<button id="copyBtn">
-📋 Copiar
-</button>
+</div>
+<div class="history-card">
 
-<button id="shareBtn">
-📤 Compartilhar
-</button>
+    <div class="history-header">
 
-<button id="searchBtn">
-🔍 Pesquisar
-</button>
+        <h3>ITENS ESCANEADOS</h3>
 
-<button id="clearBtn">
-🗑 Limpar
-</button>
+    </div>
+
+    <ul id="historyList">
+    </ul>
 
 </div>
-
 </section>
 
 <section class="upload-card">
