@@ -34,10 +34,10 @@ localStorage.getItem(
 
 function saveHistory(code){
 
-   const movement =
+  const movement =
 
-document.querySelector(
-'input[name="movement"]:checked'
+document.getElementById(
+"movementSelect"
 )?.value || "ENTRADA";
 
 const item = {
