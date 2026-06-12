@@ -916,3 +916,42 @@ footer{
     rgba(6,182,212,.25);
 
 }
+.movement-card{
+
+    margin-top:16px;
+
+}
+
+.movement-card label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:var(--muted);
+
+    font-size:.9rem;
+
+}
+
+#movementSelect{
+
+    width:100%;
+
+    height:52px;
+
+    border-radius:16px;
+
+    border:1px solid var(--border);
+
+    background:var(--surface);
+
+    color:var(--text);
+
+    padding:0 16px;
+
+    font-size:1rem;
+
+    outline:none;
+
+}
