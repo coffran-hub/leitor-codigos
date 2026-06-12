@@ -244,32 +244,21 @@ async function scanImage(file) {
    RESULTADO
 ========================= */
 
-function onCodeDetected(code) {
+function onCodeDetected(code){
 
-    if (resultField) {
+    console.log("CÓDIGO LIDO:", code);
 
-        resultField.value = code;
+    alert("Código detectado: " + code);
 
-    }
+    resultField.value = code;
 
-    if (typeof saveHistory === "function") {
+    saveHistory(code);
 
-        saveHistory(code);
-
-    }
-
-    if (typeof sendToAppsScript === "function") {
-
-        sendToAppsScript(code);
-
-    }
+    sendToAppsScript(code);
 
     playBeep();
 
-    showToast(
-        "Código detectado"
-    );
-
+    showToast("Código detectado");
 }
 
 /* =========================
