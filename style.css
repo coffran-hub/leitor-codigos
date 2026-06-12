@@ -666,6 +666,115 @@ footer{
     transition:.3s;
 
 }
+.history-card{
+
+    margin-top:25px;
+
+    background:rgba(255,255,255,.05);
+
+    border-radius:24px;
+
+    padding:20px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.history-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.history-header span{
+
+    color:#06b6d4;
+
+    font-weight:600;
+
+}
+
+#historyList{
+
+    list-style:none;
+
+    padding:0;
+
+    margin:0;
+
+}
+
+.scan-card{
+
+    background:#0f172a;
+
+    border-radius:18px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    transition:.25s;
+
+}
+
+.scan-card:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.scan-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+
+}
+
+.movement-badge{
+
+    background:#06b6d4;
+
+    color:white;
+
+    padding:5px 12px;
+
+    border-radius:999px;
+
+    font-size:.8rem;
+
+    font-weight:600;
+
+}
+
+.scan-time{
+
+    opacity:.7;
+
+    font-size:.8rem;
+
+}
+
+.scan-code{
+
+    font-size:1rem;
+
+    font-weight:600;
+
+    word-break:break-all;
+
+}
 
 .movement-selector input:checked + label{
 
