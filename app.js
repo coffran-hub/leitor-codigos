@@ -1,8 +1,3 @@
-const resultField =
-    document.getElementById("result");
-
-const historyList =
-    document.getElementById("historyList");
 
 const todayScansEl =
     document.getElementById("todayScans");
