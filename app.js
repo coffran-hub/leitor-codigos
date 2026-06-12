@@ -281,9 +281,7 @@ document
 
 async function sendToAppsScript(code){
 
-    alert("sendToAppsScript executou");
-
-    console.log("Código:", code);
+    console.log("Enviando:", code);
 
     try{
 
@@ -299,15 +297,11 @@ async function sendToAppsScript(code){
 
                     code:code,
 
-                    movement:
-                    document.getElementById(
-                    "movementSelect"
-                    )?.value || "ENTRADA",
+                    movement:"ENTRADA",
 
                     user:"WEB_APP",
 
-                    device:
-                    navigator.userAgent
+                    device:"TESTE"
 
                 })
             }
@@ -330,7 +324,7 @@ async function sendToAppsScript(code){
     catch(error){
 
         console.error(
-            "Erro:",
+            "Erro fetch:",
             error
         );
 
