@@ -1027,3 +1027,97 @@ footer{
     rgba(6,182,212,.25);
 
 }
+/* ==========================
+   AÇÕES DO SCANNER
+========================== */
+
+.scanner-actions{
+
+    margin-top:20px;
+
+}
+
+.scan-main-btn{
+
+    width:100%;
+
+    height:64px;
+
+    border:none;
+
+    border-radius:20px;
+
+    font-size:1rem;
+
+    font-weight:700;
+
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary2)
+    );
+
+    box-shadow:
+    0 12px 30px
+    rgba(6,182,212,.25);
+
+    transition:.25s;
+
+}
+
+.scan-main-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.scan-main-btn:active{
+
+    transform:scale(.98);
+
+}
+
+.secondary-actions{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin-top:12px;
+
+}
+
+.secondary-btn{
+
+    height:52px;
+
+    border-radius:16px;
+
+    border:1px solid var(--border);
+
+    background:rgba(255,255,255,.04);
+
+    color:var(--text);
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.secondary-btn:hover{
+
+    background:rgba(255,255,255,.08);
+
+}
