@@ -278,6 +278,8 @@ document
 /* =========================
    APPS SCRIPT
 ========================= */
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
 
 async function sendToAppsScript(code){
 
