@@ -1,70 +1,82 @@
-/* =====================================
-   ELEMENTOS
-===================================== */
-
 const resultField =
-document.getElementById("result");
+    document.getElementById("result");
 
 const historyList =
-document.getElementById("historyList");
-
-const totalScansEl =
-document.getElementById("totalScans");
+    document.getElementById("historyList");
 
 const todayScansEl =
-document.getElementById("todayScans");
+    document.getElementById("todayScans");
 
-const lastScanEl =
-document.getElementById("lastScan");
+const qrCountEl =
+    document.getElementById("qrCount");
 
-/* =====================================
-   HISTÓRICO
-===================================== */
+const barcodeCountEl =
+    document.getElementById("barcodeCount");
 
 let historyData =
-JSON.parse(
-localStorage.getItem(
-"scanner_history"
-)
-) || [];
+    JSON.parse(
+        localStorage.getItem(
+            "scanner_history"
+        )
+    ) || [];
 
-/* =====================================
-   SALVAR HISTÓRICO
-===================================== */
+/* =========================
+   TIPO
+========================= */
 
-function saveHistory(code){
+function detectCodeType(code) {
 
-  const movement =
+    if (
+        code.startsWith("http") ||
+        code.includes("://") ||
+        code.length > 30
+    ) {
+        return "QR";
+    }
 
-document.getElementById(
-"movementSelect"
-)?.value || "ENTRADA";
+    return "BARCODE";
+}
 
-const item = {
+/* =========================
+   HISTÓRICO
+========================= */
 
-    code,
+function saveHistory(code) {
 
-    movement,
+    const movement =
+        document.getElementById(
+            "movementSelect"
+        )?.value || "ENTRADA";
 
-    date:
-    new Date().toISOString(),
+    const item = {
 
-    localDate:
-    new Date().toLocaleString(
-    "pt-BR"
-    )
+        code,
 
-};
+        movement,
+
+        type:
+            detectCodeType(code),
+
+        date:
+            new Date().toISOString(),
+
+        localDate:
+            new Date()
+                .toLocaleString(
+                    "pt-BR"
+                )
+
+    };
 
     historyData.unshift(item);
 
     historyData =
-    historyData.slice(0,500);
+        historyData.slice(0, 500);
 
     localStorage.setItem(
         "scanner_history",
         JSON.stringify(
-        historyData
+            historyData
         )
     );
 
@@ -72,18 +84,18 @@ const item = {
 
 }
 
-/* =====================================
-   RENDER HISTÓRICO
-===================================== */
+function renderHistory() {
 
-function renderHistory(){
+    if (!historyList) return;
 
     historyList.innerHTML = "";
 
-    historyData.forEach(item=>{
+    historyData.forEach(item => {
 
         const li =
-        document.createElement("li");
+            document.createElement(
+                "li"
+            );
 
         li.innerHTML = `
 
@@ -115,346 +127,220 @@ function renderHistory(){
 
         `;
 
-        historyList.appendChild(li);
+        historyList.appendChild(
+            li
+        );
 
     });
 
     updateStats();
 
 }
-/* =====================================
+
+/* =========================
    ESTATÍSTICAS
-===================================== */
+========================= */
 
-function updateStats(){
-
-    totalScansEl.innerText =
-    historyData.length;
+function updateStats() {
 
     const today =
-    new Date()
-    .toDateString();
+        new Date()
+            .toDateString();
 
-    const todayCount =
-    historyData.filter(item=>{
+    let todayCount = 0;
+    let qrCount = 0;
+    let barcodeCount = 0;
 
-        return (
-        new Date(item.date)
-        .toDateString()
-        === today
-        );
+    historyData.forEach(item => {
 
-    }).length;
+        if (
+            new Date(item.date)
+                .toDateString() === today
+        ) {
 
-    todayScansEl.innerText =
-    todayCount;
+            todayCount++;
 
-    if(historyData.length){
+            if (
+                item.type === "QR"
+            ) {
+                qrCount++;
+            }
+            else {
+                barcodeCount++;
+            }
 
-        lastScanEl.innerText =
-        historyData[0].code
-        .substring(0,12);
-
-    }else{
-
-        lastScanEl.innerText =
-        "-";
-
-    }
-
-}
-
-/* =====================================
-   COPIAR
-===================================== */
-
-document
-.getElementById("copyBtn")
-.addEventListener(
-
-"click",
-
-async()=>{
-
-    const value =
-    resultField.value;
-
-    if(!value){
-
-        showToast(
-        "Nada para copiar"
-        );
-
-        return;
-    }
-
-    await navigator.clipboard
-    .writeText(value);
-
-    showToast(
-    "Copiado"
-    );
-
-}
-);
-
-/* =====================================
-   COMPARTILHAR
-===================================== */
-
-document
-.getElementById("shareBtn")
-.addEventListener(
-
-"click",
-
-async()=>{
-
-    const value =
-    resultField.value;
-
-    if(!value){
-
-        showToast(
-        "Nada para compartilhar"
-        );
-
-        return;
-    }
-
-    if(navigator.share){
-
-        navigator.share({
-
-            title:
-            "Código Detectado",
-
-            text:value
-
-        });
-
-    }
-
-}
-);
-
-/* =====================================
-   PESQUISAR
-===================================== */
-
-document
-.getElementById("searchBtn")
-.addEventListener(
-
-"click",
-
-()=>{
-
-    const value =
-    resultField.value;
-
-    if(!value){
-
-        showToast(
-        "Nenhum código"
-        );
-
-        return;
-    }
-
-    window.open(
-
-    "https://www.google.com/search?q="+
-    encodeURIComponent(value),
-
-    "_blank"
-
-    );
-
-}
-);
-
-/* =====================================
-   LIMPAR RESULTADO
-===================================== */
-
-document
-.getElementById("clearBtn")
-.addEventListener(
-
-"click",
-
-()=>{
-
-    resultField.value="";
-
-    showToast(
-    "Resultado limpo"
-    );
-
-}
-);
-
-/* =====================================
-   EXPORTAR CSV
-===================================== */
-
-document
-.getElementById("exportBtn")
-.addEventListener(
-
-"click",
-
-()=>{
-
-    let csv =
-    "Codigo,Data\n";
-
-    historyData.forEach(item=>{
-
-        csv +=
-        `"${item.code}","${item.localDate}"\n`;
+        }
 
     });
 
-    const blob =
-    new Blob(
-    [csv],
-    {
-        type:
-        "text/csv"
+    if (todayScansEl) {
+        todayScansEl.innerText =
+            todayCount;
     }
-    );
 
-    const url =
-    URL.createObjectURL(blob);
+    if (qrCountEl) {
+        qrCountEl.innerText =
+            qrCount;
+    }
 
-    const a =
-    document.createElement("a");
-
-    a.href = url;
-
-    a.download =
-    "historico_scanner.csv";
-
-    a.click();
-
-    URL.revokeObjectURL(url);
+    if (barcodeCountEl) {
+        barcodeCountEl.innerText =
+            barcodeCount;
+    }
 
 }
-);
 
-/* =====================================
-   LIMPAR HISTÓRICO
-===================================== */
+/* =========================
+   EXPORTAR CSV
+========================= */
 
 document
-.getElementById(
-"clearHistoryBtn"
-)
-.addEventListener(
+    .getElementById("exportBtn")
+    ?.addEventListener(
+        "click",
+        () => {
 
-"click",
+            let csv =
+                "Codigo,Movimento,Data\n";
 
-()=>{
+            historyData.forEach(item => {
 
-    const confirmDelete =
-    confirm(
-    "Apagar histórico?"
+                csv +=
+                    `"${item.code}","${item.movement}","${item.localDate}"\n`;
+
+            });
+
+            const blob =
+                new Blob(
+                    [csv],
+                    {
+                        type:
+                            "text/csv"
+                    }
+                );
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+            const a =
+                document.createElement(
+                    "a"
+                );
+
+            a.href = url;
+            a.download =
+                "historico_scanner.csv";
+
+            a.click();
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        }
     );
 
-    if(!confirmDelete)
-    return;
+/* =========================
+   LIMPAR HISTÓRICO
+========================= */
 
-    historyData=[];
+document
+    .getElementById(
+        "clearHistoryBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
 
-    localStorage.removeItem(
-    "scanner_history"
+            if (
+                !confirm(
+                    "Apagar histórico?"
+                )
+            ) return;
+
+            historyData = [];
+
+            localStorage.removeItem(
+                "scanner_history"
+            );
+
+            renderHistory();
+
+            showToast(
+                "Histórico apagado"
+            );
+
+        }
     );
 
-    renderHistory();
-
-    showToast(
-    "Histórico apagado"
-    );
-
-}
-);
-
-/* =====================================
-   GOOGLE APPS SCRIPT
-===================================== */
-
-/*
-Substituir pela URL do seu
-Web App publicado
-*/
+/* =========================
+   APPS SCRIPT
+========================= */
 
 const APPS_SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec";
+    "COLE_SUA_URL_AQUI";
 
-/* =====================================
-   ENVIAR PARA PLANILHA
-===================================== */
+async function sendToAppsScript(code) {
 
-async function sendToAppsScript(code){
+    if (
+        !APPS_SCRIPT_URL ||
+        APPS_SCRIPT_URL === "COLE_SUA_URL_AQUI"
+    ) {
+        return;
+    }
 
-  if(
-    APPS_SCRIPT_URL ===
-    "https://script.google.com/macros/s/AKfycbwzdZjoOI4A3MOSaNcLD9A8gxoxGH-7EQBp1wGCQ0gR4Aje31n8dvB27fb1DhirCqf8eg/exec"
-  ){
-    return;
-  }
+    try {
 
-  try{
+        await fetch(
+            APPS_SCRIPT_URL,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body:
+                    JSON.stringify({
 
-    await fetch(
+                        code,
 
-      APPS_SCRIPT_URL,
+                        movement:
+                            document.getElementById(
+                                "movementSelect"
+                            )?.value || "ENTRADA",
 
-      {
+                        date:
+                            new Date()
+                                .toLocaleString(
+                                    "pt-BR"
+                                ),
 
-        method:"POST",
+                        user:
+                            "WEB_APP",
 
-        headers:{
-          "Content-Type":
-          "application/json"
-        },
+                        device:
+                            navigator.userAgent
 
-        body:
-        JSON.stringify({
+                    })
+            }
+        );
 
-          code:code,
+    }
+    catch (error) {
 
-          type:"SCAN",
+        console.error(
+            error
+        );
 
-          user:"WEB_APP",
-
-          device:
-          navigator.userAgent
-
-        })
-
-      }
-
-    );
-
-  }
-
-  catch(error){
-
-    console.error(
-      error
-    );
-
-  }
+    }
 
 }
 
-/* =====================================
-   INICIALIZAÇÃO
-===================================== */
+/* =========================
+   INIT
+========================= */
 
 renderHistory();
-
 updateStats();
