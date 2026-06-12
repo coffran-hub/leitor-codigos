@@ -1,104 +1,89 @@
-const codeReader =
-new ZXing.BrowserMultiFormatReader();
+const codeReader = new ZXing.BrowserMultiFormatReader();
 
-const video =
-document.getElementById("video");
-
-const resultField =
-document.getElementById("result");
+const video = document.getElementById("video");
+const resultField = document.getElementById("result");
 
 let currentTrack = null;
 let torchEnabled = false;
 
-/* --------------------------
-   CARREGAR CAMERAS
--------------------------- */
+/* =========================
+   CÂMERAS
+========================= */
 
-async function loadCameras(){
-
-    try{
-
+async function loadCameras() {
+    try {
         const devices =
-        await codeReader.listVideoInputDevices();
+            await codeReader.listVideoInputDevices();
 
-        console.log(
-        "Câmeras:",
-        devices
-        );
-
+        console.log("Câmeras:", devices);
     }
-    catch(error){
-
+    catch (error) {
         console.error(error);
-
     }
-
 }
 
-/* --------------------------
+/* =========================
    INICIAR SCANNER
--------------------------- */
+========================= */
 
-async function startScanner(){
+async function startScanner() {
 
-    try{
+    try {
 
         stopScanner();
 
         const devices =
-        await codeReader
-        .listVideoInputDevices();
+            await codeReader.listVideoInputDevices();
 
-        if(!devices.length){
+        if (!devices.length) {
 
             showToast(
-            "Nenhuma câmera encontrada"
+                "Nenhuma câmera encontrada"
             );
 
             return;
         }
 
         let selectedDeviceId =
-        devices[0].deviceId;
+            devices[0].deviceId;
 
         const rearCamera =
-        devices.find(device=>{
+            devices.find(device => {
 
-            const label =
-            (device.label || "")
-            .toLowerCase();
+                const label =
+                    (device.label || "")
+                        .toLowerCase();
 
-            return(
+                return (
 
-                label.includes("back") ||
-                label.includes("rear") ||
-                label.includes("traseira") ||
-                label.includes("environment")
+                    label.includes("back") ||
+                    label.includes("rear") ||
+                    label.includes("traseira") ||
+                    label.includes("environment")
 
-            );
+                );
 
-        });
+            });
 
-        if(rearCamera){
+        if (rearCamera) {
 
             selectedDeviceId =
-            rearCamera.deviceId;
+                rearCamera.deviceId;
 
         }
 
-        await codeReader
-        .decodeFromVideoDevice(
+        await codeReader.decodeFromVideoDevice(
 
             selectedDeviceId,
 
             video,
 
-            (result,error)=>{
+            (result, error) => {
 
-                if(result){
+                if (result) {
 
                     onCodeDetected(
-                    result.text
+                        result.text
                     );
 
                 }
@@ -108,44 +93,43 @@ async function startScanner(){
         );
 
         const stream =
-        video.srcObject;
+            video.srcObject;
 
-        if(stream){
+        if (stream) {
 
             currentTrack =
-            stream
-            .getVideoTracks()[0];
+                stream.getVideoTracks()[0];
 
         }
 
         showToast(
-        "Scanner iniciado"
+            "Scanner iniciado"
         );
 
     }
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
         showToast(
-        "Erro ao iniciar câmera"
+            "Erro ao iniciar câmera"
         );
 
     }
 
 }
 
-/* --------------------------
+/* =========================
    PARAR SCANNER
--------------------------- */
+========================= */
 
-function stopScanner(){
+function stopScanner() {
 
-    try{
+    try {
 
         codeReader.reset();
 
-        if(currentTrack){
+        if (currentTrack) {
 
             currentTrack.stop();
 
@@ -154,7 +138,7 @@ function stopScanner(){
         }
 
     }
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
@@ -162,59 +146,56 @@ function stopScanner(){
 
 }
 
-/* --------------------------
+/* =========================
    FLASH
--------------------------- */
+========================= */
 
-async function toggleFlash(){
+async function toggleFlash() {
 
-    try{
+    try {
 
-        if(!currentTrack){
+        if (!currentTrack) {
 
             showToast(
-            "Inicie a câmera primeiro"
+                "Inicie a câmera primeiro"
             );
 
             return;
         }
 
         const capabilities =
-        currentTrack.getCapabilities();
+            currentTrack.getCapabilities();
 
-        if(!capabilities.torch){
+        if (!capabilities.torch) {
 
             showToast(
-            "Flash não suportado"
+                "Flash não suportado"
             );
 
             return;
         }
 
         torchEnabled =
-        !torchEnabled;
+            !torchEnabled;
 
-        await currentTrack
-        .applyConstraints({
+        await currentTrack.applyConstraints({
 
-            advanced:[
-            {
-                torch:torchEnabled
-            }
+            advanced: [
+                {
+                    torch: torchEnabled
+                }
             ]
 
         });
 
         showToast(
-
             torchEnabled
-            ? "Flash ligado"
-            : "Flash desligado"
-
+                ? "Flash ligado"
+                : "Flash desligado"
         );
 
     }
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
@@ -222,66 +203,62 @@ async function toggleFlash(){
 
 }
 
-/* --------------------------
-   SCAN POR IMAGEM
--------------------------- */
+/* =========================
+   SCAN IMAGEM
+========================= */
 
-async function scanImage(file){
+async function scanImage(file) {
 
-    try{
+    try {
 
         const imageUrl =
-        URL.createObjectURL(file);
+            URL.createObjectURL(file);
 
         const result =
-        await codeReader
-        .decodeFromImageUrl(
-        imageUrl
-        );
+            await codeReader.decodeFromImageUrl(
+                imageUrl
+            );
 
-        if(result){
+        if (result) {
 
             onCodeDetected(
-            result.text
+                result.text
             );
 
         }
 
     }
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
         showToast(
-        "Nenhum código encontrado"
+            "Nenhum código encontrado"
         );
 
     }
 
 }
 
-/* --------------------------
+/* =========================
    RESULTADO
--------------------------- */
+========================= */
 
-function onCodeDetected(code){
+function onCodeDetected(code) {
 
-    resultField.value =
-    code;
+    if (resultField) {
 
-    if(
-    typeof saveHistory
-    === "function"
-    ){
+        resultField.value = code;
+
+    }
+
+    if (typeof saveHistory === "function") {
 
         saveHistory(code);
 
     }
 
-    if(
-    typeof sendToAppsScript
-    === "function"
-    ){
+    if (typeof sendToAppsScript === "function") {
 
         sendToAppsScript(code);
 
@@ -290,21 +267,21 @@ function onCodeDetected(code){
     playBeep();
 
     showToast(
-    "Código detectado"
+        "Código detectado"
     );
 
 }
 
-/* --------------------------
+/* =========================
    SOM
--------------------------- */
+========================= */
 
-function playBeep(){
+function playBeep() {
 
     const audio =
-    new Audio(
-    "https://actions.google.com/sounds/v1/cartoon/pop.ogg"
-    );
+        new Audio(
+            "https://actions.google.com/sounds/v1/cartoon/pop.ogg"
+        );
 
     audio.volume = 0.4;
 
@@ -312,205 +289,83 @@ function playBeep(){
 
 }
 
-/* --------------------------
+/* =========================
    TOAST
--------------------------- */
+========================= */
 
-function showToast(message){
+function showToast(message) {
 
     const toast =
-    document.getElementById(
-    "toast"
-    );
-
-    if(!toast)
-    return;
-
-    toast.innerText =
-    message;
-
-    toast.classList.add(
-    "show"
-    );
-
-    setTimeout(()=>{
-
-        toast.classList.remove(
-        "show"
+        document.getElementById(
+            "toast"
         );
 
-    },2500);
+    if (!toast) return;
 
-}
+    toast.innerText = message;
 
-/* --------------------------
-   EVENTOS
--------------------------- */
-
-window.addEventListener(
-
-"load",
-
-async()=>{
-
-    await loadCameras();
-
-}
-
-);
-
-document
-.getElementById("startBtn")
-.addEventListener(
-"click",
-startScanner
-);
-
-document
-.getElementById("stopBtn")
-.addEventListener(
-"click",
-stopScanner
-);
-
-document
-.getElementById("flashBtn")
-.addEventListener(
-"click",
-toggleFlash
-);
-
-document
-.getElementById("imageInput")
-.addEventListener(
-"change",
-(event)=>{
-
-    const file =
-    event.target.files[0];
-
-    if(file){
-
-        scanImage(file);
-
-    }
-
-}
-);
-
-function saveHistory(code){
-
-    const movement =
-    document.querySelector(
-    'input[name="movement"]:checked'
-    ).value;
-
-    const item = {
-
-        code,
-
-        movement,
-
-        type:
-        detectCodeType(code),
-
-        date:
-        new Date()
-        .toISOString(),
-
-        localDate:
-        new Date()
-        .toLocaleString(
-        "pt-BR"
-        )
-
-    };
-
-    historyData.unshift(item);
-
-    localStorage.setItem(
-
-        "scanner_history",
-
-        JSON.stringify(
-        historyData
-        )
-
+    toast.classList.add(
+        "show"
     );
 
-    renderHistory();
+    setTimeout(() => {
+
+        toast.classList.remove(
+            "show"
+        );
+
+    }, 2500);
 
 }
-function detectCodeType(code){
 
-    if(
+/* =========================
+   EVENTOS
+========================= */
 
-        code.startsWith("http") ||
-        code.includes("://") ||
-        code.length > 30
+window.addEventListener(
+    "load",
+    async () => {
 
-    ){
-
-        return "QR";
+        await loadCameras();
 
     }
+);
 
-    return "BARCODE";
+document
+    .getElementById("startBtn")
+    ?.addEventListener(
+        "click",
+        startScanner
+    );
 
-}
-function updateStats(){
+document
+    .getElementById("stopBtn")
+    ?.addEventListener(
+        "click",
+        stopScanner
+    );
 
-    const today =
-    new Date()
-    .toDateString();
+document
+    .getElementById("flashBtn")
+    ?.addEventListener(
+        "click",
+        toggleFlash
+    );
 
-    let qrCount = 0;
-    let barcodeCount = 0;
-    let todayCount = 0;
+document
+    .getElementById("imageInput")
+    ?.addEventListener(
+        "change",
+        (event) => {
 
-    historyData.forEach(item=>{
+            const file =
+                event.target.files[0];
 
-        if(
+            if (file) {
 
-            new Date(item.date)
-            .toDateString()
-            === today
-
-        ){
-
-            todayCount++;
-
-            if(item.type==="QR"){
-
-                qrCount++;
-
-            }
-            else{
-
-                barcodeCount++;
+                scanImage(file);
 
             }
 
         }
-
-    });
-
-    document
-    .getElementById(
-    "todayScans"
-    ).innerText =
-    todayCount;
-
-    document
-    .getElementById(
-    "qrCount"
-    ).innerText =
-    qrCount;
-
-    document
-    .getElementById(
-    "barcodeCount"
-    ).innerText =
-    barcodeCount;
-
-}
+    );
