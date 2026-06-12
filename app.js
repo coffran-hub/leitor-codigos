@@ -339,3 +339,6 @@ async function sendToAppsScript(code){
 
 renderHistory();
 updateStats();
+
+alert("APP.JS CARREGOU");
+
